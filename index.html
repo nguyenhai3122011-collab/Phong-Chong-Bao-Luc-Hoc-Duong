@@ -85,12 +85,12 @@
             color: #4da6ff;
         }
 
-        /* Khung nội dung có hỗ trợ cuộn */
+        /* Khung nội dung */
         #content-wrapper {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(150%, -50%); /* Đợi ở bên phải */
+            transform: translate(150%, -50%);
             width: 85%;
             max-width: 850px;
             background: rgba(15, 15, 15, 0.95);
@@ -102,7 +102,7 @@
             transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
             display: flex;
             flex-direction: column;
-            max-height: 80vh; /* Giới hạn chiều cao */
+            max-height: 80vh;
         }
 
         #content-wrapper.active {
@@ -110,7 +110,6 @@
             opacity: 1;
         }
 
-        /* Khu vực văn bản có cuộn */
         .scrollable-content {
             overflow-y: auto;
             padding-right: 15px;
@@ -122,17 +121,21 @@
             text-align: justify;
         }
 
+        /* Định dạng đặc biệt cho nội dung */
+        .custom-bold { font-weight: bold; color: #fff; }
+        .custom-underline { text-decoration: underline; }
+        .custom-highlight { 
+            background-color: #0056b3; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            color: white; 
+            font-weight: 500;
+        }
+
         /* Custom Scrollbar */
-        .scrollable-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        .scrollable-content::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .scrollable-content::-webkit-scrollbar-thumb {
-            background: #4da6ff;
-            border-radius: 10px;
-        }
+        .scrollable-content::-webkit-scrollbar { width: 6px; }
+        .scrollable-content::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        .scrollable-content::-webkit-scrollbar-thumb { background: #4da6ff; border-radius: 10px; }
 
         .back-btn {
             align-self: flex-start;
@@ -149,19 +152,7 @@
             gap: 10px;
         }
 
-        .back-btn:hover {
-            background: #4da6ff;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .typing::after {
-            content: '_';
-            animation: blink 0.8s infinite;
-            color: #4da6ff;
-        }
-
-        @keyframes blink { 50% { opacity: 0; } }
+        .back-btn:hover { background: #4da6ff; color: white; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -201,7 +192,7 @@
 </div>
 
 <script>
-    /* --- CANVAS BACKGROUND --- */
+    /* --- CANVAS BACKGROUND (Giữ nguyên) --- */
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -253,54 +244,42 @@
     window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
     init(); animate();
 
-    /* --- LOGIC XỬ LÝ NỘI DUNG --- */
+    /* --- LOGIC XỬ LÝ NỘI DUNG VÀ ĐỊNH DẠNG --- */
     const menu = document.getElementById('menu');
     const wrapper = document.getElementById('content-wrapper');
     const textBody = document.getElementById('text-body');
     const titleTag = document.getElementById('content-title');
-    let typingTimer;
+
+    // Hàm biến đổi văn bản theo quy tắc của bạn
+    function parseCustomFormatting(text) {
+        let formatted = text
+            .replace(/\*\*(.*?)\*\*/g, '<span class="custom-bold">$1</span>') // In đậm
+            .replace(/--(.*?)--/g, '<span class="custom-underline">$1</span>') // Gạch chân
+            .replace(/{{(.*?)}}/g, '<span class="custom-highlight">$1</span>'); // Tô đậm nền
+        return formatted;
+    }
 
     async function fetchAndShow(file, title) {
-        // Trượt menu đi
         menu.classList.add('slide-out');
         
         let content = "";
         try {
             const response = await fetch(file);
-            content = response.ok ? await response.text() : `Không tìm thấy nội dung file: ${file}`;
+            content = response.ok ? await response.text() : `Không tìm thấy file: ${file}`;
         } catch (e) {
-            content = "Lưu ý: Bạn đang chạy file trực tiếp. Để đọc được file .txt, bạn cần chạy qua một web server hoặc đẩy lên Github Pages.\n\nĐây là nội dung mô phỏng cho: " + title;
+            content = "Lỗi kết nối. Nội dung mẫu:\n**Bạo lực học đường** là vấn đề nan giải.\n--Cần hành động ngay--.\n{{Giải pháp}} là giáo dục nhân cách.";
         }
 
-        // Hiện khung nội dung
         setTimeout(() => {
             titleTag.innerText = title;
-            textBody.innerText = "";
+            // Áp dụng định dạng ngay lập tức, không dùng hiệu ứng đánh máy
+            textBody.innerHTML = parseCustomFormatting(content);
+            textBody.scrollTop = 0; // Quay lại đầu trang khi mở nội dung mới
             wrapper.classList.add('active');
-            startTyping(content);
         }, 700);
     }
 
-    function startTyping(text) {
-        let i = 0;
-        textBody.classList.add('typing');
-        clearInterval(typingTimer);
-        
-        typingTimer = setInterval(() => {
-            if (i < text.length) {
-                textBody.innerText += text.charAt(i);
-                i++;
-                // Tự động cuộn xuống khi đang đánh máy để người dùng thấy dòng mới nhất
-                textBody.scrollTop = textBody.scrollHeight;
-            } else {
-                clearInterval(typingTimer);
-                textBody.classList.remove('typing');
-            }
-        }, 10); // Tốc độ nhanh 10ms
-    }
-
     function goBack() {
-        clearInterval(typingTimer);
         wrapper.classList.remove('active');
         setTimeout(() => {
             menu.classList.remove('slide-out');
