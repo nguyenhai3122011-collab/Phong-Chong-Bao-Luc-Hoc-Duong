@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tìm hiểu về Bạo lực học đường</title>
+    <title>Hệ Thống Thông Tin Bạo Lực Học Đường</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -22,121 +22,146 @@
             z-index: -1;
         }
 
-        /* Container chính */
         #app-container {
             position: relative;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
-        /* Menu lựa chọn */
+        /* Menu chính */
         .menu-container {
             text-align: center;
-            transition: transform 0.8s ease-in-out, opacity 0.5s;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            z-index: 10;
         }
 
         .menu-container.slide-out {
-            transform: translateX(-150%);
+            transform: translateX(-150%) scale(0.8);
             opacity: 0;
+            pointer-events: none;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .option-btn {
             display: block;
             width: 100%;
-            max-width: 450px;
-            margin: 10px auto;
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
+            min-width: 400px;
+            margin: 12px auto;
+            padding: 18px 25px;
+            font-size: 1.05rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
             text-align: left;
         }
 
         .option-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #fff;
+            transform: translateX(10px);
+            color: #fff;
         }
 
         .option-btn i {
             margin-right: 15px;
-            width: 25px;
-            text-align: center;
+            color: #4da6ff;
         }
 
-        /* Nội dung hiển thị */
-        #content-container {
+        /* Khung nội dung có hỗ trợ cuộn */
+        #content-wrapper {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(50%, -50%); /* Start from right */
-            width: 80%;
-            max-width: 800px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px;
+            transform: translate(150%, -50%); /* Đợi ở bên phải */
+            width: 85%;
+            max-width: 850px;
+            background: rgba(15, 15, 15, 0.95);
+            padding: 35px;
             border-radius: 20px;
-            border-left: 5px solid #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex;
+            flex-direction: column;
+            max-height: 80vh; /* Giới hạn chiều cao */
         }
 
-        #content-container.active {
+        #content-wrapper.active {
             transform: translate(-50%, -50%);
             opacity: 1;
-            visibility: visible;
         }
 
-        #text-content {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            min-height: 200px;
+        /* Khu vực văn bản có cuộn */
+        .scrollable-content {
+            overflow-y: auto;
+            padding-right: 15px;
+            margin: 20px 0;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #ddd;
             white-space: pre-wrap;
+            text-align: justify;
+        }
+
+        /* Custom Scrollbar */
+        .scrollable-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollable-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: #4da6ff;
+            border-radius: 10px;
         }
 
         .back-btn {
-            margin-top: 30px;
-            background: none;
-            border: 1px solid white;
-            color: white;
-            padding: 10px 20px;
+            align-self: flex-start;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 8px;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .back-btn:hover {
-            background: white;
-            color: black;
+            background: #4da6ff;
+            color: white;
+            transform: scale(1.05);
         }
 
-        /* Hiệu ứng con trỏ đánh máy */
         .typing::after {
-            content: '|';
-            animation: blink 0.7s infinite;
+            content: '_';
+            animation: blink 0.8s infinite;
+            color: #4da6ff;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -145,38 +170,38 @@
 
 <div id="app-container">
     <div class="menu-container" id="menu">
-        <h2><i class="fas fa-graduation-cap"></i> Bạn muốn tìm hiểu về:</h2>
+        <h2><i class="fas fa-shield-alt"></i> TÌM HIỂU KIẾN THỨC</h2>
         
-        <button class="option-btn" onclick="showTopic('now.txt', 'Hiện trạng bạo lực học đường')">
-            <i class="fas fa-chart-line"></i> Hiện trạng của bạo lực học đường
+        <button class="option-btn" onclick="fetchAndShow('now.txt', 'Hiện trạng bạo lực học đường')">
+            <i class="fas fa-bullhorn"></i> Hiện trạng của bạo lực học đường
         </button>
         
-        <button class="option-btn" onclick="showTopic('why.txt', 'Nguyên nhân bạo lực')">
-            <i class="fas fa-question-circle"></i> Nguyên nhân của bạo lực học đường
+        <button class="option-btn" onclick="fetchAndShow('why.txt', 'Nguyên nhân bạo lực')">
+            <i class="fas fa-brain"></i> Nguyên nhân của bạo lực học đường
         </button>
         
-        <button class="option-btn" onclick="showTopic('giaiphap.txt', 'Giải pháp khắc phục')">
-            <i class="fas fa-lightbulb"></i> Giải pháp cho bạo lực học đường
+        <button class="option-btn" onclick="fetchAndShow('giaiphap.txt', 'Giải pháp khắc phục')">
+            <i class="fas fa-hand-holding-heart"></i> Giải pháp cho bạo lực học đường
         </button>
         
-        <button class="option-btn" onclick="showTopic('dienramai.txt', 'Hệ quả lâu dài')">
-            <i class="fas fa-exclamation-triangle"></i> Sẽ ra sao nếu bạo lực diễn ra mãi?
+        <button class="option-btn" onclick="fetchAndShow('dienramai.txt', 'Hệ quả tương lai')">
+            <i class="fas fa-clock"></i> Sẽ ra sao nếu bạo lực diễn ra mãi?
         </button>
         
-        <button class="option-btn" onclick="showTopic('kobaoluc.txt', 'Tương lai tươi sáng')">
-            <i class="fas fa-seedling"></i> Sẽ ra sao nếu không có bạo lực?
+        <button class="option-btn" onclick="fetchAndShow('kobaoluc.txt', 'Môi trường lý tưởng')">
+            <i class="fas fa-sun"></i> Sẽ ra sao nếu không có bạo lực?
         </button>
     </div>
 
-    <div id="content-container">
-        <h2 id="content-title" style="color: #4da6ff;"></h2>
-        <div id="text-content"></div>
-        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Quay lại</button>
+    <div id="content-wrapper">
+        <h2 id="content-title" style="margin-top:0; color: #4da6ff; border-bottom: 1px solid #333; padding-bottom: 15px;"></h2>
+        <div id="text-body" class="scrollable-content"></div>
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> QUAY LẠI</button>
     </div>
 </div>
 
 <script>
-    /* --- PHẦN 1: NỀN CANVAS MẠNG LƯỚI (GIỮ NGUYÊN CỦA BẠN) --- */
+    /* --- CANVAS BACKGROUND --- */
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -189,8 +214,8 @@
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.size = 2;
-            this.vx = (Math.random() - 0.5) * 1.2;
-            this.vy = (Math.random() - 0.5) * 1.2;
+            this.vx = (Math.random() - 0.5) * 1;
+            this.vy = (Math.random() - 0.5) * 1;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
@@ -198,14 +223,14 @@
             if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
         }
         draw() {
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
             ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
         }
     }
 
     function init() {
         particles = [];
-        for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
     }
 
     function animate() {
@@ -217,9 +242,8 @@
                 const dx = p1.x - p2.x; const dy = p1.y - p2.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < linkDistance) {
-                    let opacity = 1 - (dist / linkDistance);
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`; 
-                    ctx.lineWidth = 1; ctx.beginPath();
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist/linkDistance})`; 
+                    ctx.lineWidth = 0.8; ctx.beginPath();
                     ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 }
             }
@@ -229,56 +253,58 @@
     window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
     init(); animate();
 
-    /* --- PHẦN 2: XỬ LÝ LOGIC NỘI DUNG & HIỆU ỨNG --- */
-
+    /* --- LOGIC XỬ LÝ NỘI DUNG --- */
     const menu = document.getElementById('menu');
-    const contentContainer = document.getElementById('content-container');
-    const textContent = document.getElementById('text-content');
-    const contentTitle = document.getElementById('content-title');
+    const wrapper = document.getElementById('content-wrapper');
+    const textBody = document.getElementById('text-body');
+    const titleTag = document.getElementById('content-title');
+    let typingTimer;
 
-    // Hàm đánh máy
-    function typeWriter(text, i = 0) {
-        if (i < text.length) {
-            textContent.innerHTML += text.charAt(i);
-            textContent.classList.add('typing');
-            setTimeout(() => typeWriter(text, i + 1), 30); // Tốc độ đánh máy (30ms)
-        } else {
-            textContent.classList.remove('typing');
-        }
-    }
-
-    async function showTopic(fileName, title) {
-        // 1. Hiệu ứng trượt menu sang trái
+    async function fetchAndShow(file, title) {
+        // Trượt menu đi
         menu.classList.add('slide-out');
         
-        // 2. Lấy dữ liệu từ Github (Giả định file nằm cùng thư mục hoặc bạn thay URL Github vào)
-        let text = "";
+        let content = "";
         try {
-            // Thay đổi đường dẫn này thành đường dẫn thật của bạn nếu cần
-            const response = await fetch(fileName);
-            if (response.ok) {
-                text = await response.text();
-            } else {
-                text = "Lỗi: Không tìm thấy file " + fileName + ". Hãy đảm bảo file tồn tại trong cùng thư mục.";
-            }
+            const response = await fetch(file);
+            content = response.ok ? await response.text() : `Không tìm thấy nội dung file: ${file}`;
         } catch (e) {
-            text = "Nội dung mẫu: Bạn đang xem chủ đề " + title + ". (Không thể fetch file do chính sách bảo mật trình duyệt khi chạy file local hoặc sai đường dẫn).";
+            content = "Lưu ý: Bạn đang chạy file trực tiếp. Để đọc được file .txt, bạn cần chạy qua một web server hoặc đẩy lên Github Pages.\n\nĐây là nội dung mô phỏng cho: " + title;
         }
 
-        // 3. Hiện container nội dung
+        // Hiện khung nội dung
         setTimeout(() => {
-            contentTitle.innerText = title;
-            textContent.innerHTML = "";
-            contentContainer.classList.add('active');
-            typeWriter(text);
-        }, 600);
+            titleTag.innerText = title;
+            textBody.innerText = "";
+            wrapper.classList.add('active');
+            startTyping(content);
+        }, 700);
+    }
+
+    function startTyping(text) {
+        let i = 0;
+        textBody.classList.add('typing');
+        clearInterval(typingTimer);
+        
+        typingTimer = setInterval(() => {
+            if (i < text.length) {
+                textBody.innerText += text.charAt(i);
+                i++;
+                // Tự động cuộn xuống khi đang đánh máy để người dùng thấy dòng mới nhất
+                textBody.scrollTop = textBody.scrollHeight;
+            } else {
+                clearInterval(typingTimer);
+                textBody.classList.remove('typing');
+            }
+        }, 10); // Tốc độ nhanh 10ms
     }
 
     function goBack() {
-        contentContainer.classList.remove('active');
+        clearInterval(typingTimer);
+        wrapper.classList.remove('active');
         setTimeout(() => {
             menu.classList.remove('slide-out');
-        }, 500);
+        }, 600);
     }
 </script>
 </body>
