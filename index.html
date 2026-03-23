@@ -10,7 +10,7 @@
             margin: 0;
             overflow: hidden;
             background-color: #000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: white;
         }
 
@@ -50,9 +50,8 @@
         }
 
         h2 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 30px;
-            color: #fff;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -60,10 +59,10 @@
         .option-btn {
             display: block;
             width: 100%;
-            min-width: 420px;
+            min-width: 450px;
             margin: 14px auto;
-            padding: 18px 25px;
-            font-size: 1.1rem;
+            padding: 20px 25px;
+            font-size: 1.2rem;
             background: rgba(255, 255, 255, 0.05);
             color: #e0e0e0;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -86,24 +85,24 @@
             color: #4da6ff;
         }
 
-        /* Khung nội dung */
+        /* KHUNG CỬA SỔ THÔNG TIN TO HƠN */
         #content-wrapper {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(150%, -50%);
-            width: 85%;
-            max-width: 900px;
+            width: 92%; /* To hơn */
+            max-width: 1100px; /* To hơn */
             background: rgba(10, 10, 10, 0.98);
-            padding: 35px;
+            padding: 50px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            box-shadow: 0 20px 80px rgba(0,0,0,1);
             opacity: 0;
             transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
             display: flex;
             flex-direction: column;
-            max-height: 85vh;
+            max-height: 88vh;
         }
 
         #content-wrapper.active {
@@ -111,37 +110,46 @@
             opacity: 1;
         }
 
+        /* NỘI DUNG CHỮ TO HƠN */
+        #content-title {
+            font-size: 2.2rem; /* Tiêu đề to */
+            margin-top: 0;
+            color: #4da6ff;
+            border-bottom: 2px solid rgba(77, 166, 255, 0.2);
+            padding-bottom: 20px;
+        }
+
         .scrollable-content {
             overflow-y: auto;
-            padding-right: 20px;
-            margin: 20px 0;
-            font-size: 1.15rem;
+            padding-right: 25px;
+            margin: 25px 0;
+            font-size: 1.35rem; /* Chữ nội dung to hơn */
             line-height: 1.8;
-            color: #ececec;
+            color: #f0f0f0;
             white-space: pre-wrap;
             text-align: justify;
         }
 
-        /* Định dạng đặc biệt */
-        .custom-bold { font-weight: bold; color: #fff; font-size: 1.2rem; }
-        .custom-underline { text-decoration: underline; text-underline-offset: 4px; }
-        .custom-highlight { 
-            background: linear-gradient(90deg, #0056b3, #007bff);
-            padding: 2px 8px; 
-            border-radius: 6px; 
-            color: white; 
-            font-weight: 600;
-        }
-
-        /* Hiển thị ảnh */
+        /* ẢNH NHỎ LẠI */
         .content-image {
             display: block;
-            max-width: 100%;
+            max-width: 55%; /* Ảnh chỉ chiếm 55% khung hình */
             height: auto;
-            margin: 20px auto;
+            margin: 30px auto;
             border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Định dạng đặc biệt */
+        .custom-bold { font-weight: 800; color: #fff; font-size: 1.45rem; }
+        .custom-underline { text-decoration: underline; text-underline-offset: 6px; }
+        .custom-highlight { 
+            background: linear-gradient(90deg, #0056b3, #007bff);
+            padding: 3px 12px; 
+            border-radius: 8px; 
+            color: white; 
+            font-weight: 600;
         }
 
         /* Custom Scrollbar */
@@ -154,16 +162,16 @@
             background: #fff;
             color: #000;
             border: none;
-            padding: 12px 28px;
+            padding: 14px 32px;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 12px;
             transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .back-btn:hover { background: #4da6ff; color: white; transform: scale(1.05); }
@@ -199,7 +207,7 @@
     </div>
 
     <div id="content-wrapper">
-        <h2 id="content-title" style="margin-top:0; color: #4da6ff; border-bottom: 2px solid rgba(77, 166, 255, 0.3); padding-bottom: 15px;"></h2>
+        <h2 id="content-title"></h2>
         <div id="text-body" class="scrollable-content"></div>
         <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> TRỞ LẠI MENU</button>
     </div>
@@ -265,16 +273,15 @@
     const titleTag = document.getElementById('content-title');
 
     function parseContent(text) {
-        // 1. Xử lý link ảnh trước: tìm các link kết thúc bằng jpg, png, gif, webp, jpeg
-        // Regex này tìm các URL ảnh đứng độc lập hoặc trong văn bản
+        // Xử lý link ảnh
         const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|jpeg|png|gif|webp))/gi;
-        let formatted = text.replace(imageRegex, '<img src="$1" class="content-image" alt="Hình ảnh minh họa">');
+        let formatted = text.replace(imageRegex, '<img src="$1" class="content-image" alt="Hình ảnh">');
 
-        // 2. Xử lý các định dạng văn bản
+        // Xử lý định dạng văn bản
         formatted = formatted
-            .replace(/\*\*(.*?)\*\*/g, '<span class="custom-bold">$1</span>') // In đậm
-            .replace(/--(.*?)--/g, '<span class="custom-underline">$1</span>') // Gạch chân
-            .replace(/{{(.*?)}}/g, '<span class="custom-highlight">$1</span>'); // Tô đậm nền
+            .replace(/\*\*(.*?)\*\*/g, '<span class="custom-bold">$1</span>')
+            .replace(/--(.*?)--/g, '<span class="custom-underline">$1</span>')
+            .replace(/{{(.*?)}}/g, '<span class="custom-highlight">$1</span>');
             
         return formatted;
     }
@@ -287,7 +294,7 @@
             const response = await fetch(file);
             content = response.ok ? await response.text() : `Không tìm thấy file: ${file}`;
         } catch (e) {
-            content = "Lỗi kết nối file. Đây là mẫu định dạng:\n\n**Tiêu đề in đậm**\n--Dòng gạch chân--\n{{Nội dung quan trọng}}\n\nLink ảnh mẫu:\nhttps://images.unsplash.com/photo-1543269865-cbf427effbad?w=800";
+            content = "Lỗi tải dữ liệu. Hãy kiểm tra lại file của bạn.";
         }
 
         setTimeout(() => {
