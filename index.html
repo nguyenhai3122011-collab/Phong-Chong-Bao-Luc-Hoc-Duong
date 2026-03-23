@@ -3,15 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mạng Lưới Liên Kết Rõ Nét</title>
+    <title>Tìm hiểu về Bạo lực học đường</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
         }
+
         canvas {
             display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Container chính */
+        #app-container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Menu lựa chọn */
+        .menu-container {
+            text-align: center;
+            transition: transform 0.8s ease-in-out, opacity 0.5s;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-container.slide-out {
+            transform: translateX(-150%);
+            opacity: 0;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            max-width: 450px;
+            margin: 10px auto;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .option-btn i {
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+
+        /* Nội dung hiển thị */
+        #content-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(50%, -50%); /* Start from right */
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            border-left: 5px solid #fff;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #content-container.active {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #text-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        /* Hiệu ứng con trỏ đánh máy */
+        .typing::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
         }
     </style>
 </head>
@@ -19,92 +143,143 @@
 
 <canvas id="canvas"></canvas>
 
+<div id="app-container">
+    <div class="menu-container" id="menu">
+        <h2><i class="fas fa-graduation-cap"></i> Bạn muốn tìm hiểu về:</h2>
+        
+        <button class="option-btn" onclick="showTopic('now.txt', 'Hiện trạng bạo lực học đường')">
+            <i class="fas fa-chart-line"></i> Hiện trạng của bạo lực học đường
+        </button>
+        
+        <button class="option-btn" onclick="showTopic('why.txt', 'Nguyên nhân bạo lực')">
+            <i class="fas fa-question-circle"></i> Nguyên nhân của bạo lực học đường
+        </button>
+        
+        <button class="option-btn" onclick="showTopic('giaiphap.txt', 'Giải pháp khắc phục')">
+            <i class="fas fa-lightbulb"></i> Giải pháp cho bạo lực học đường
+        </button>
+        
+        <button class="option-btn" onclick="showTopic('dienramai.txt', 'Hệ quả lâu dài')">
+            <i class="fas fa-exclamation-triangle"></i> Sẽ ra sao nếu bạo lực diễn ra mãi?
+        </button>
+        
+        <button class="option-btn" onclick="showTopic('kobaoluc.txt', 'Tương lai tươi sáng')">
+            <i class="fas fa-seedling"></i> Sẽ ra sao nếu không có bạo lực?
+        </button>
+    </div>
+
+    <div id="content-container">
+        <h2 id="content-title" style="color: #4da6ff;"></h2>
+        <div id="text-content"></div>
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Quay lại</button>
+    </div>
+</div>
+
 <script>
+    /* --- PHẦN 1: NỀN CANVAS MẠNG LƯỚI (GIỮ NGUYÊN CỦA BẠN) --- */
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     let particles = [];
-    // Khoảng cách tối đa để hai điểm tự nối với nhau
     const linkDistance = 150; 
 
     class Particle {
         constructor() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.size = 3; // Điểm to hơn một chút
-            // Tốc độ di chuyển ngẫu nhiên
+            this.size = 2;
             this.vx = (Math.random() - 0.5) * 1.2;
             this.vy = (Math.random() - 0.5) * 1.2;
         }
-
         update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            // Nảy lại khi chạm cạnh màn hình
+            this.x += this.vx; this.y += this.vy;
             if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
             if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
         }
-
         draw() {
             ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
         }
     }
 
     function init() {
         particles = [];
-        // Giữ mật độ vừa phải để các đường nối trông rõ ràng, không bị rối
-        const numberOfParticles = 120; 
-        for (let i = 0; i < numberOfParticles; i++) {
-            particles.push(new Particle());
-        }
+        for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
     }
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         for (let i = 0; i < particles.length; i++) {
-            const p1 = particles[i];
-            p1.update();
-            p1.draw();
-
+            const p1 = particles[i]; p1.update(); p1.draw();
             for (let j = i + 1; j < particles.length; j++) {
                 const p2 = particles[j];
-                const dx = p1.x - p2.x;
-                const dy = p1.y - p2.y;
+                const dx = p1.x - p2.x; const dy = p1.y - p2.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-
-                // Nếu khoảng cách đủ gần, vẽ đường nối rõ nét
                 if (dist < linkDistance) {
-                    // Tính toán độ đậm (càng gần càng sáng rõ)
                     let opacity = 1 - (dist / linkDistance);
-                    
                     ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`; 
-                    ctx.lineWidth = 1.5; // Làm đường kẻ dày hơn
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.stroke();
+                    ctx.lineWidth = 1; ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 }
             }
         }
         requestAnimationFrame(animate);
     }
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+    init(); animate();
 
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        init();
-    });
+    /* --- PHẦN 2: XỬ LÝ LOGIC NỘI DUNG & HIỆU ỨNG --- */
 
-    init();
-    animate();
+    const menu = document.getElementById('menu');
+    const contentContainer = document.getElementById('content-container');
+    const textContent = document.getElementById('text-content');
+    const contentTitle = document.getElementById('content-title');
+
+    // Hàm đánh máy
+    function typeWriter(text, i = 0) {
+        if (i < text.length) {
+            textContent.innerHTML += text.charAt(i);
+            textContent.classList.add('typing');
+            setTimeout(() => typeWriter(text, i + 1), 30); // Tốc độ đánh máy (30ms)
+        } else {
+            textContent.classList.remove('typing');
+        }
+    }
+
+    async function showTopic(fileName, title) {
+        // 1. Hiệu ứng trượt menu sang trái
+        menu.classList.add('slide-out');
+        
+        // 2. Lấy dữ liệu từ Github (Giả định file nằm cùng thư mục hoặc bạn thay URL Github vào)
+        let text = "";
+        try {
+            // Thay đổi đường dẫn này thành đường dẫn thật của bạn nếu cần
+            const response = await fetch(fileName);
+            if (response.ok) {
+                text = await response.text();
+            } else {
+                text = "Lỗi: Không tìm thấy file " + fileName + ". Hãy đảm bảo file tồn tại trong cùng thư mục.";
+            }
+        } catch (e) {
+            text = "Nội dung mẫu: Bạn đang xem chủ đề " + title + ". (Không thể fetch file do chính sách bảo mật trình duyệt khi chạy file local hoặc sai đường dẫn).";
+        }
+
+        // 3. Hiện container nội dung
+        setTimeout(() => {
+            contentTitle.innerText = title;
+            textContent.innerHTML = "";
+            contentContainer.classList.add('active');
+            typeWriter(text);
+        }, 600);
+    }
+
+    function goBack() {
+        contentContainer.classList.remove('active');
+        setTimeout(() => {
+            menu.classList.remove('slide-out');
+        }, 500);
+    }
 </script>
 </body>
 </html>
