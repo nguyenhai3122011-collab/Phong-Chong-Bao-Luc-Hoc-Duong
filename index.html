@@ -8,7 +8,6 @@
     <style>
         body {
             margin: 0;
-            /* Thay đổi overflow để tránh bị đứng trang trên một số trình duyệt mobile */
             overflow: hidden;
             background-color: #000;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -27,14 +26,14 @@
         #app-container {
             position: relative;
             height: 100vh;
-            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* Menu chính */
+        /* Menu chính - Tối ưu độ rộng linh hoạt */
         .menu-container {
             text-align: center;
             transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
@@ -45,8 +44,8 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 0 40px rgba(0,0,0,0.6);
             z-index: 10;
-            width: 90%;
-            max-width: 500px; /* Giới hạn độ rộng trên máy tính */
+            width: 100%;
+            max-width: 500px; /* Giới hạn trên máy tính */
         }
 
         .menu-container.slide-out {
@@ -56,8 +55,8 @@
         }
 
         h2 {
-            font-size: 1.5rem; /* Giảm size tiêu đề một chút cho mobile */
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -65,6 +64,7 @@
         .option-btn {
             display: block;
             width: 100%;
+            /* min-width: 450px; <-- Xóa cái này để không bị tràn màn hình điện thoại */
             margin: 10px auto;
             padding: 15px 20px;
             font-size: 1rem;
@@ -73,9 +73,9 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: left;
-            box-sizing: border-box; /* Đảm bảo padding không làm tràn nút */
+            box-sizing: border-box;
         }
 
         .option-btn:hover {
@@ -83,13 +83,12 @@
             border-color: #4da6ff;
             transform: translateX(10px);
             color: #fff;
+            box-shadow: -5px 0 15px rgba(77, 166, 255, 0.3);
         }
 
         .option-btn i {
             margin-right: 12px;
             color: #4da6ff;
-            width: 20px;
-            text-align: center;
         }
 
         /* KHUNG CỬA SỔ THÔNG TIN */
@@ -98,11 +97,10 @@
             top: 50%;
             left: 50%;
             transform: translate(150%, -50%);
-            width: 90%; 
-            height: 85vh; /* Cố định chiều cao để scroll bên trong */
-            max-width: 1000px;
+            width: 95%; 
+            max-width: 1100px;
             background: rgba(10, 10, 10, 0.98);
-            padding: 30px;
+            padding: 25px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 20px 80px rgba(0,0,0,1);
@@ -110,6 +108,7 @@
             transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
             display: flex;
             flex-direction: column;
+            max-height: 90vh;
             box-sizing: border-box;
         }
 
@@ -119,17 +118,16 @@
         }
 
         #content-title {
-            font-size: 1.6rem;
-            margin: 0;
+            font-size: 1.4rem;
+            margin-top: 0;
             color: #4da6ff;
             border-bottom: 2px solid rgba(77, 166, 255, 0.2);
             padding-bottom: 15px;
         }
 
         .scrollable-content {
-            flex-grow: 1;
             overflow-y: auto;
-            padding-right: 15px;
+            padding-right: 10px;
             margin: 20px 0;
             font-size: 1.1rem;
             line-height: 1.6;
@@ -138,48 +136,55 @@
             text-align: justify;
         }
 
-        /* ẢNH PHẢN HỒI (RESPONSIVE IMAGE) */
+        /* ẢNH TỰ THÍCH NGHI */
         .content-image {
             display: block;
             width: 100%;
-            max-width: 500px; /* Thu nhỏ ảnh trên PC */
+            max-width: 600px;
             height: auto;
             margin: 20px auto;
             border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .back-btn {
+            align-self: flex-start;
             background: #fff;
             color: #000;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 24px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 10px;
+            transition: 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
             text-transform: uppercase;
             font-size: 0.9rem;
-            width: fit-content;
         }
 
-        /* --- MEDIA QUERIES CHO MÁY TÍNH (MÀN HÌNH LỚN) --- */
+        /* --- MEDIA QUERIES: ĐIỀU CHỈNH CHO MÁY TÍNH --- */
         @media (min-width: 768px) {
             h2 { font-size: 2rem; }
             .option-btn { font-size: 1.2rem; padding: 20px 25px; }
+            #content-wrapper { padding: 50px; width: 92%; }
             #content-title { font-size: 2.2rem; }
             .scrollable-content { font-size: 1.35rem; padding-right: 25px; }
-            #content-wrapper { padding: 50px; }
-            .back-btn { font-size: 1rem; }
+            .back-btn { font-size: 1rem; padding: 14px 32px; }
+            .content-image { max-width: 55%; }
         }
 
-        /* Định dạng đặc biệt */
+        /* Định dạng nội dung */
         .custom-bold { font-weight: 800; color: #fff; }
-        .custom-highlight { background: #0056b3; padding: 2px 8px; border-radius: 4px; }
+        .custom-underline { text-decoration: underline; text-underline-offset: 6px; }
+        .custom-highlight { 
+            background: linear-gradient(90deg, #0056b3, #007bff);
+            padding: 2px 8px; 
+            border-radius: 6px; 
+            color: white; 
+        }
 
-        /* Scrollbar */
         .scrollable-content::-webkit-scrollbar { width: 6px; }
         .scrollable-content::-webkit-scrollbar-thumb { background: #4da6ff; border-radius: 10px; }
     </style>
@@ -190,43 +195,38 @@
 
 <div id="app-container">
     <div class="menu-container" id="menu">
-        <h2><i class="fas fa-shield-alt"></i> TÌM HIỂU VỀ</h2>
-        
-        <button class="option-btn" onclick="fetchAndShow('now.txt', 'Hiện trạng')">
+        <h2><i class="fas fa-shield-alt"></i> Tìm Hiểu Thêm</h2>
+        <button class="option-btn" onclick="fetchAndShow('now.txt', 'Hiện trạng bạo lực học đường')">
             <i class="fas fa-bullhorn"></i> Hiện trạng bạo lực
         </button>
-        
-        <button class="option-btn" onclick="fetchAndShow('why.txt', 'Nguyên nhân')">
+        <button class="option-btn" onclick="fetchAndShow('why.txt', 'Nguyên nhân bạo lực')">
             <i class="fas fa-brain"></i> Nguyên nhân bạo lực
         </button>
-        
-        <button class="option-btn" onclick="fetchAndShow('giaiphap.txt', 'Giải pháp')">
+        <button class="option-btn" onclick="fetchAndShow('giaiphap.txt', 'Giải pháp khắc phục')">
             <i class="fas fa-hand-holding-heart"></i> Giải pháp khắc phục
         </button>
-        
-        <button class="option-btn" onclick="fetchAndShow('dienramai.txt', 'Hệ quả')">
-            <i class="fas fa-clock"></i> Sẽ ra sao nếu kéo dài?
+        <button class="option-btn" onclick="fetchAndShow('dienramai.txt', 'Hệ quả tương lai')">
+            <i class="fas fa-clock"></i> Hệ quả tương lai
         </button>
-        
-        <button class="option-btn" onclick="fetchAndShow('kobaoluc.txt', 'Lý tưởng')">
-            <i class="fas fa-sun"></i> Môi trường không bạo lực
+        <button class="option-btn" onclick="fetchAndShow('kobaoluc.txt', 'Môi trường lý tưởng')">
+            <i class="fas fa-sun"></i> Môi trường lý tưởng
         </button>
     </div>
 
     <div id="content-wrapper">
         <h2 id="content-title"></h2>
         <div id="text-body" class="scrollable-content"></div>
-        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> QUAY LẠI</button>
+        <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> TRỞ LẠI</button>
     </div>
 </div>
 
 <script>
-    /* --- CANVAS BACKGROUND (Giữ nguyên logic nhưng tối ưu hiệu suất) --- */
+    /* --- CANVAS BACKGROUND --- */
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
     
-    function resize() {
+    function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         init();
@@ -236,43 +236,48 @@
         constructor() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.6;
-            this.vy = (Math.random() - 0.5) * 0.6;
+            this.size = 2;
+            this.vx = (Math.random() - 0.5) * 0.8;
+            this.vy = (Math.random() - 0.5) * 0.8;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
             if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
             if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
         }
+        draw() {
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+        }
     }
 
     function init() {
         particles = [];
-        // Giảm số lượng hạt trên điện thoại để mượt hơn
-        const count = window.innerWidth < 768 ? 40 : 90;
+        const count = window.innerWidth < 768 ? 40 : 90; // Giảm hạt trên mobile cho mượt
         for (let i = 0; i < count; i++) particles.push(new Particle());
     }
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const linkDist = 120;
+        const linkDistance = 150;
         for (let i = 0; i < particles.length; i++) {
-            const p1 = particles[i]; p1.update();
+            const p1 = particles[i]; p1.update(); p1.draw();
             for (let j = i + 1; j < particles.length; j++) {
                 const p2 = particles[j];
-                const dx = p1.x - p2.x, dy = p1.y - p2.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < linkDist) {
-                    ctx.strokeStyle = `rgba(255,255,255,${0.5 - dist/linkDist})`;
-                    ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                const dx = p1.x - p2.x; const dy = p1.y - p2.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < linkDistance) {
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${0.8 - dist/linkDistance})`; 
+                    ctx.lineWidth = 0.8; ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 }
             }
         }
         requestAnimationFrame(animate);
     }
     
-    window.addEventListener('resize', resize);
-    resize(); animate();
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); animate();
 
     /* --- LOGIC XỬ LÝ --- */
     const menu = document.getElementById('menu');
@@ -282,28 +287,35 @@
 
     function parseContent(text) {
         const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|jpeg|png|gif|webp))/gi;
-        return text.replace(imageRegex, '<img src="$1" class="content-image" alt="Hình ảnh">')
-                   .replace(/\*\*(.*?)\*\*/g, '<span class="custom-bold">$1</span>')
-                   .replace(/{{(.*?)}}/g, '<span class="custom-highlight">$1</span>');
+        let formatted = text.replace(imageRegex, '<img src="$1" class="content-image" alt="Hình ảnh">');
+        formatted = formatted
+            .replace(/\*\*(.*?)\*\*/g, '<span class="custom-bold">$1</span>')
+            .replace(/--(.*?)--/g, '<span class="custom-underline">$1</span>')
+            .replace(/{{(.*?)}}/g, '<span class="custom-highlight">$1</span>');
+        return formatted;
     }
 
     async function fetchAndShow(file, title) {
         menu.classList.add('slide-out');
+        let content = "";
         try {
             const response = await fetch(file);
-            const content = response.ok ? await response.text() : "Dữ liệu đang được cập nhật...";
+            content = response.ok ? await response.text() : `Không tìm thấy nội dung.`;
+        } catch (e) {
+            content = "Lỗi kết nối dữ liệu.";
+        }
+
+        setTimeout(() => {
             titleTag.innerText = title;
             textBody.innerHTML = parseContent(content);
-            textBody.scrollTop = 0;
-            setTimeout(() => wrapper.classList.add('active'), 300);
-        } catch (e) {
-            alert("Lỗi kết nối!");
-        }
+            textBody.scrollTop = 0; 
+            wrapper.classList.add('active');
+        }, 700);
     }
 
     function goBack() {
         wrapper.classList.remove('active');
-        setTimeout(() => menu.classList.remove('slide-out'), 400);
+        setTimeout(() => { menu.classList.remove('slide-out'); }, 600);
     }
 </script>
 </body>
